@@ -1,10 +1,15 @@
 require('dotenv').config({ path: require('path').join(__dirname, '../../.env') })
 const { Pool } = require('pg')
 
+// Strip libpq-only params that the pg library doesn't support
+const dbUrl = process.env.DATABASE_URL
+  ? process.env.DATABASE_URL.replace(/[?&]channel_binding=[^&]*/g, '').replace(/\?$/, '')
+  : null
+
 const pool = new Pool(
-  process.env.DATABASE_URL
+  dbUrl
     ? {
-        connectionString: process.env.DATABASE_URL,
+        connectionString: dbUrl,
         ssl: { rejectUnauthorized: false },
         max: 20,
         idleTimeoutMillis: 30000,

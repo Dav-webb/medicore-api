@@ -63,8 +63,16 @@ app.use(rateLimit({
 // ── Audit middleware (auto-logs mutations) ────────────────────────────────────
 app.use(auditMiddleware)
 
-// ── Health check ──────────────────────────────────────────────────────────────
-app.get('/health', (_req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }))
+// ── Health check (includes DB ping) ──────────────────────────────────────────
+const pool = require('./db/pool')
+app.get('/health', async (_req, res) => {
+  try {
+    await pool.query('SELECT 1')
+    res.json({ status: 'ok', db: 'connected', timestamp: new Date().toISOString() })
+  } catch (e) {
+    res.status(500).json({ status: 'error', db: 'disconnected', error: e.message })
+  }
+})
 
 // ── API routes ────────────────────────────────────────────────────────────────
 app.use('/api/auth',          authRoutes)
