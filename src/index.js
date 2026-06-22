@@ -28,7 +28,7 @@ app.use(helmet({
 }))
 
 // ── CORS ──────────────────────────────────────────────────────────────────────
-const ALLOWED_ORIGINS = (process.env.CORS_ORIGIN || 'http://localhost:5173')
+const ALLOWED_ORIGINS = (process.env.CORS_ORIGIN || 'http://localhost:5173,https://medicore-ai-gh.web.app,https://medicore-ai-gh.firebaseapp.com')
   .split(',').map(s => s.trim())
 
 app.use(cors({
